@@ -1,4 +1,4 @@
-import { apiUrl, commonOptions } from "./constants";
+import { apiUrl, commonOptions } from "./commonOptions";
 
 const actions = {
   FILTER: "filter",
@@ -6,30 +6,6 @@ const actions = {
   ITEMS: "get_items",
   FIELDS: "get_fields",
 };
-
-export function getIdsParamCreator(offset, limit) {
-  return {
-    offset,
-    limit,
-  };
-}
-export function getItemsParamCreator(ids) {
-  return {
-    ids,
-  };
-}
-export function getFieldsParamCreator(field, offset, limit) {
-  return {
-    field,
-    offset,
-    limit,
-  };
-}
-export function getFilteredParamCreator(field) {
-  return {
-    field,
-  };
-}
 
 export async function getIds(params) {
   return await _fetch(params, actions.IDS);
@@ -48,8 +24,8 @@ async function _fetch(params, action) {
   const response = await fetch(apiUrl, {
     ...commonOptions,
     body: JSON.stringify({
-      action: action,
-      params: params,
+      action,
+      params,
     }),
   }).then((res) => res.json());
 

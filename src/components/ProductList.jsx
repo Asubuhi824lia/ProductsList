@@ -1,8 +1,11 @@
 import s from "./ProductList.module.scss";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ProductItem from "./ProductItem";
-import { apiUrl, commonOptions } from "../api/constants";
-import { getFields, getFiltered, getIds } from "../api/api";
+import {
+  getIdsParamCreator,
+  getItemsParamCreator,
+} from "../api/paramsCreators";
+import { getIds, getItems } from "../api/api";
 
 const response = {
   result: [
@@ -21,15 +24,18 @@ const queryBody = {
 };
 
 function ProductList({}) {
+  const [goods, setGoods] = useState([]);
+
   useEffect(() => {
-    getFiltered(queryBody).then(console.log);
+    getIds(getIdsParamCreator(0, 50))
+      .then((ids) => getItems(getItemsParamCreator(ids.result)))
+      .then((items) => setGoods(items.result));
   }, []);
 
   return (
     <section>
-      {response.map((prod) => (
-        <ProductItem key={prod.id} prod={prod} />
-      ))}
+      {goods.length &&
+        goods.map((product) => <ProductItem key={product.id} prod={product} />)}
     </section>
   );
 }
