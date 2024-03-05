@@ -6,6 +6,7 @@ import {
   getItemsParamCreator,
 } from "../api/paramsCreators";
 import { getIds, getItems } from "../api/api";
+import Pagination from "./Pagination";
 
 const response = {
   result: [
@@ -22,21 +23,34 @@ const queryBody = {
   action: "filter",
   params: { price: 17500.0 },
 };
+const PageItems = 50;
 
 function ProductList({}) {
   const [goods, setGoods] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [PageNum, setPageNum] = useState(1);
 
   useEffect(() => {
-    getIds(getIdsParamCreator(0, 50))
+    console.log(PageNum);
+    setLoading(true);
+    getIds(getIdsParamCreator(PageNum - 1, PageItems))
       .then((ids) => getItems(getItemsParamCreator(ids.result)))
-      .then((items) => setGoods(items.result));
-  }, []);
+      .then((items) => setGoods(items.result))
+      .then(() => setLoading(false));
+  }, [PageNum]);
 
   return (
-    <section>
-      {goods.length &&
-        goods.map((product) => <ProductItem key={product.id} prod={product} />)}
-    </section>
+    <main>
+      <section>
+        {loading && <h3>Loading...</h3>}
+        {!loading &&
+          goods.length &&
+          goods.map((product) => (
+            <ProductItem key={product.id} prod={product} />
+          ))}
+      </section>
+      <Pagination PageNum={PageNum} setPageNum={setPageNum} />
+    </main>
   );
 }
 
