@@ -6,9 +6,11 @@ function ProductItem({ prod }) {
 
   return (
     <section className={s.productItem}>
-      <span className={s.product}>{product}</span>
-      <span className={s.price}>{price}</span>
-      <span className={s.brand}>{brand}</span>
+      <div className={s.product}>{product}</div>
+      <div className={s.addInfo}>
+        <div className={s.addInfo__brand}>{brand}</div>
+        <div className={s.addInfo__price}>{price}</div>
+      </div>
     </section>
   );
 }

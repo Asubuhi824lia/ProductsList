@@ -6,7 +6,8 @@ import {
   getItemsParamCreator,
 } from "../api/paramsCreators";
 import { getIds, getItems } from "../api/api";
-import Pagination from "./Pagination";
+// import Pagination from "./Pagination";
+import ProductCard from "./ProductCard";
 
 const response = {
   result: [
@@ -19,37 +20,40 @@ const response = {
   ],
 }.result;
 
-const queryBody = {
-  action: "filter",
-  params: { price: 17500.0 },
-};
 const PageItems = 50;
+
+function checkIds(ids) {
+  console.log(new Set(ids));
+  console.log(ids);
+}
 
 function ProductList({}) {
   const [goods, setGoods] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [PageNum, setPageNum] = useState(1);
+  const [PageNum, setPageNum] = useState(10);
 
   useEffect(() => {
-    console.log(PageNum);
+    console.log(goods);
     setLoading(true);
     getIds(getIdsParamCreator(PageNum - 1, PageItems))
-      .then((ids) => getItems(getItemsParamCreator(ids.result)))
+      .then((ids) => {
+        console.log(Array.from(new Set(ids.result)));
+        return getItems(getItemsParamCreator(ids.result));
+      })
       .then((items) => setGoods(items.result))
       .then(() => setLoading(false));
   }, [PageNum]);
 
   return (
     <main>
-      <section>
+      <section className={s.goods}>
         {loading && <h3>Loading...</h3>}
         {!loading &&
           goods.length &&
           goods.map((product) => (
-            <ProductItem key={product.id} prod={product} />
+            <ProductCard product={product} key={product.id} />
           ))}
       </section>
-      <Pagination PageNum={PageNum} setPageNum={setPageNum} />
     </main>
   );
 }

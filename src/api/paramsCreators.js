@@ -1,6 +1,6 @@
-export function getIdsParamCreator(offset, limit) {
+export function getIdsParamCreator(page, limit) {
   return {
-    offset,
+    offset: page * limit,
     limit,
   };
 }
