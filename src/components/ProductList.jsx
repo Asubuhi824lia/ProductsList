@@ -24,23 +24,35 @@ const PageItems = 50;
 function ProductList({ PageNum }) {
   const [goods, setGoods] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const setStatuses = (loadStatus, errStatus) => {
+    setLoading(loadStatus), setError(errStatus);
+  };
 
   useEffect(() => {
     console.log(goods);
     setLoading(true);
     getIds(getIdsParamCreator(PageNum - 1, PageItems))
+      // Получение списка id товаров
       .then((ids) => {
         console.log(Array.from(new Set(ids.result)));
         return getItems(getItemsParamCreator(ids.result));
       })
-      .then((items) => setGoods(items.result))
-      .then(() => setStatuses(false, null));
+      // Получение списка товаров
+      .then((items) => {
+        setGoods(items.result);
+        setStatuses(false, null);
+      })
+      .catch((err) => setStatuses(false, err.message));
   }, [PageNum]);
 
   return (
     <section className={s.goods}>
       {loading && <h3>Loading...</h3>}
+      {error && <h3>{error}</h3>}
       {!loading &&
+        !error &&
         goods.length &&
         goods.map((product) => (
           <ProductCard product={product} key={product.id} />
