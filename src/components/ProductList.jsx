@@ -1,6 +1,5 @@
 import s from "./ProductList.module.scss";
 import React, { useEffect, useState } from "react";
-import ProductItem from "./ProductItem";
 import {
   getIdsParamCreator,
   getItemsParamCreator,
@@ -22,15 +21,9 @@ const response = {
 
 const PageItems = 50;
 
-function checkIds(ids) {
-  console.log(new Set(ids));
-  console.log(ids);
-}
-
-function ProductList({}) {
+function ProductList({ PageNum }) {
   const [goods, setGoods] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [PageNum, setPageNum] = useState(10);
 
   useEffect(() => {
     console.log(goods);
@@ -41,20 +34,18 @@ function ProductList({}) {
         return getItems(getItemsParamCreator(ids.result));
       })
       .then((items) => setGoods(items.result))
-      .then(() => setLoading(false));
+      .then(() => setStatuses(false, null));
   }, [PageNum]);
 
   return (
-    <main>
-      <section className={s.goods}>
-        {loading && <h3>Loading...</h3>}
-        {!loading &&
-          goods.length &&
-          goods.map((product) => (
-            <ProductCard product={product} key={product.id} />
-          ))}
-      </section>
-    </main>
+    <section className={s.goods}>
+      {loading && <h3>Loading...</h3>}
+      {!loading &&
+        goods.length &&
+        goods.map((product) => (
+          <ProductCard product={product} key={product.id} />
+        ))}
+    </section>
   );
 }
 

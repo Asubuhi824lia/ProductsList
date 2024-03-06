@@ -1,23 +1,26 @@
 import s from "./ProductList.module.scss";
 import React from "react";
+import Stack from "@mui/material/Stack";
+import Pagination from "@mui/material/Pagination";
 
-function Pagination({ PageNum, setPageNum }) {
-  const onPrevBtnHandler = () => {
-    if (PageNum > 1) setPageNum(PageNum - 1);
-  };
-  const onNextBtnHandler = () => {
-    setPageNum(PageNum + 1);
+export function PaginationLine({ PageNum, setPageNum }) {
+  const PageChangeHandler = (e, p) => {
+    setPageNum(p);
   };
 
   return (
-    <div>
-      <button onClick={onPrevBtnHandler} disabled={PageNum === 1}>
-        prev
-      </button>
-      <span>{PageNum}</span>
-      <button onClick={onNextBtnHandler}>next</button>
+    <div className={s.pagination}>
+      <Stack spacing={2}>
+        <Pagination
+          count={161}
+          variant="outlined"
+          shape="rounded"
+          page={PageNum}
+          onChange={PageChangeHandler}
+        />
+      </Stack>
     </div>
   );
 }
 
-export default Pagination;
+export default PaginationLine;
