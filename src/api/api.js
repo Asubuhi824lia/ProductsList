@@ -21,13 +21,23 @@ export async function getFiltered(params) {
 }
 
 async function _fetch(params, action) {
-  const response = await fetch(apiUrl, {
-    ...commonOptions,
-    body: JSON.stringify({
-      action,
-      params,
-    }),
-  }).then((res) => res.json());
+  let response = undefined;
+
+  do {
+    response = await fetch(apiUrl, {
+      ...commonOptions,
+      body: JSON.stringify({
+        action,
+        params,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) =>
+        err.status
+          ? console.error(`Error ${err.status}!`)
+          : console.error(err.message)
+      );
+  } while (!response);
 
   return response;
 }

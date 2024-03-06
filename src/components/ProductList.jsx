@@ -8,22 +8,10 @@ import { getIds, getItems } from "../api/api";
 // import Pagination from "./Pagination";
 import ProductCard from "./ProductCard";
 
-const response = {
-  result: [
-    {
-      brand: null,
-      id: "1789ecf3-f81c-4f49-ada2-83804dcc74b0",
-      price: 16700.0,
-      product: "Золотое кольцо с бриллиантами",
-    },
-  ],
-}.result;
-
 const PageItems = 50;
 
-async function fetchUniqueIds({ PageNum, left, offset = 0, uniques = [] }) {
-  // проверка входных данных
-  if (PageItems <= 0 || left <= 0 || offset < 0) return [];
+async function getUniqueIds({ PageNum, left, offset = 0, uniques = [] }) {
+  if (PageItems <= 0 || left <= 0 || offset < 0) return []; // проверка входных данных
 
   // подгрузка
   const response = await getIds(getIdsParamCreator(offset + PageNum - 1, left));
@@ -38,7 +26,7 @@ async function fetchUniqueIds({ PageNum, left, offset = 0, uniques = [] }) {
   // ids не хватает
   if (ids.length < PageItems) {
     // Вызываем рекурсию ради "накопления" уникальных ids до нужного кол-ва
-    return await fetchUniqueIds({
+    return await getUniqueIds({
       PageNum: PageNum,
       left: PageItems - ids.length,
       offset: offset + PageItems,
@@ -69,15 +57,13 @@ function ProductList({ PageNum }) {
   };
 
   useEffect(() => {
-    console.log(goods);
     setLoading(true);
-    fetchUniqueIds({ PageNum, left: PageItems })
+    getUniqueIds({ PageNum, left: PageItems })
       // Получение списка id товаров
       .then((ids) => getItems(getItemsParamCreator(ids)))
       // Получение списка товаров
       .then(removeItemsDuplicates)
       .then((items) => {
-        console.log(items);
         setGoods(items);
         setStatuses(false, null);
       })
