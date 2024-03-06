@@ -47,6 +47,17 @@ async function fetchUniqueIds({ PageNum, left, offset = 0, uniques = [] }) {
   } else if (ids.length === PageItems) return ids; // 50 ids найдено!
   else return ids.slice(0, PageItems - 1); // отсекаем лишние (подстраховка)
 }
+const removeItemsDuplicates = (items) => {
+  const uniqItems = [];
+  const includesId = (id) => {
+    return uniqItems.find((item) => item.id === id) ? true : false;
+  };
+  // добавить только товар с новым id
+  items.result.forEach((item) => {
+    if (!includesId(item.id)) uniqItems.push(item);
+  });
+  return uniqItems;
+};
 
 function ProductList({ PageNum }) {
   const [goods, setGoods] = useState([]);
@@ -64,9 +75,10 @@ function ProductList({ PageNum }) {
       // Получение списка id товаров
       .then((ids) => getItems(getItemsParamCreator(ids)))
       // Получение списка товаров
+      .then(removeItemsDuplicates)
       .then((items) => {
-        console.log(items.result);
-        setGoods(items.result);
+        console.log(items);
+        setGoods(items);
         setStatuses(false, null);
       })
       .catch((err) => setStatuses(false, err.message));
@@ -76,7 +88,7 @@ function ProductList({ PageNum }) {
     <section className={s.goods}>
       {loading && <h3>Loading...</h3>}
       {!loading && error && (
-        <h3>Oops, Server Error! Update or Change your page, please</h3>
+        <h3>Oops, Server Error! Update or Change page, please</h3>
       )}
       {!loading &&
         !error &&
