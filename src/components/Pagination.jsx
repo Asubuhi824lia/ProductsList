@@ -1,4 +1,4 @@
-import s from "./ProductList.module.scss";
+import s from "./Products.module.scss";
 import React from "react";
 import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";

@@ -1,0 +1,18 @@
+.container {
+  width: min(900px, 100%);
+}
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 1.3em 
+}
+
+.goods {
+  display: flex;
+  flex-direction: row;
+  gap: 1.2em;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}

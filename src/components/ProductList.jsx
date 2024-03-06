@@ -1,4 +1,4 @@
-import s from "./ProductList.module.scss";
+import s from "./Products.module.scss";
 import React, { useEffect, useState } from "react";
 import {
   getIdsParamCreator,
@@ -21,6 +21,33 @@ const response = {
 
 const PageItems = 50;
 
+async function fetchUniqueIds({ PageNum, left, offset = 0, uniques = [] }) {
+  // проверка входных данных
+  if (PageItems <= 0 || left <= 0 || offset < 0) return [];
+
+  // подгрузка
+  const response = await getIds(getIdsParamCreator(offset + PageNum - 1, left));
+  // проверка
+  let ids = response.result;
+  if (uniques.length > 0) ids = [...uniques, ...ids];
+  ids = Array.from(new Set(ids));
+
+  // достигли последней порции данных?
+  if (response.result.length < left) return ids;
+
+  // ids не хватает
+  if (ids.length < PageItems) {
+    // Вызываем рекурсию ради "накопления" уникальных ids до нужного кол-ва
+    return await fetchUniqueIds({
+      PageNum: PageNum,
+      left: PageItems - ids.length,
+      offset: offset + PageItems,
+      uniques: ids,
+    });
+  } else if (ids.length === PageItems) return ids; // 50 ids найдено!
+  else return ids.slice(0, PageItems - 1); // отсекаем лишние (подстраховка)
+}
+
 function ProductList({ PageNum }) {
   const [goods, setGoods] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,14 +60,12 @@ function ProductList({ PageNum }) {
   useEffect(() => {
     console.log(goods);
     setLoading(true);
-    getIds(getIdsParamCreator(PageNum - 1, PageItems))
+    fetchUniqueIds({ PageNum, left: PageItems })
       // Получение списка id товаров
-      .then((ids) => {
-        console.log(Array.from(new Set(ids.result)));
-        return getItems(getItemsParamCreator(ids.result));
-      })
+      .then((ids) => getItems(getItemsParamCreator(ids)))
       // Получение списка товаров
       .then((items) => {
+        console.log(items.result);
         setGoods(items.result);
         setStatuses(false, null);
       })
@@ -50,7 +75,9 @@ function ProductList({ PageNum }) {
   return (
     <section className={s.goods}>
       {loading && <h3>Loading...</h3>}
-      {error && <h3>{error}</h3>}
+      {!loading && error && (
+        <h3>Oops, Server Error! Update or Change your page, please</h3>
+      )}
       {!loading &&
         !error &&
         goods.length &&
