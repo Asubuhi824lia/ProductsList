@@ -1,23 +1,23 @@
-export function getIdsParamCreator(page, limit) {
+export function getIdsParamCreator({ offset, limit }) {
   return {
-    offset: page * limit,
+    offset,
     limit,
   };
 }
-export function getItemsParamCreator(ids) {
+export function getItemsParamCreator({ ids }) {
   return {
     ids,
   };
 }
-export function getFieldsParamCreator(field, offset, limit) {
+export function getFieldsParamCreator({ field, offset, limit }) {
   return {
     field,
     offset,
     limit,
   };
 }
-export function getFilteredParamCreator(field) {
+export function getFilteredParamCreator(field, value) {
   return {
-    field,
+    [field]: value,
   };
 }

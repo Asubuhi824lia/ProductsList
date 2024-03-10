@@ -28,10 +28,15 @@ export default function ProductCard({ product }) {
         </Box>
       )}
       <div>
-        <Typography level="title-lg">{product.price} ₽</Typography>
+        <Typography level="h2">{product.price} ₽</Typography>
+      </div>
+      <div>
+        <Typography fontSize="md" textColor="text.tertiary">
+          id: <Typography level="title-md">{product.id}</Typography>
+        </Typography>
       </div>
       <CardContent>
-        <Typography level="body-md">{product.product}</Typography>
+        <Typography level="body-lg">{product.product}</Typography>
       </CardContent>
     </Card>
   );
